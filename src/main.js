@@ -9,6 +9,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import axios from 'axios'
 import App from './App.vue'
+import router from './router'
 
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
@@ -19,5 +20,6 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
 new Vue({
-  render: h => h(App),
+  router,
+  render: h => h(App)
 }).$mount('#app')
