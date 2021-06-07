@@ -13,12 +13,11 @@
               tag="button">
             <b-icon icon="pencil-square" aria-hidden="true" variant="success"> </b-icon>
           </router-link>
-          <router-link
-              :to="{path: '/announcement/delete/' + getUpdateId(data.item.id)}"
-              tag="button">
+          &nbsp;
+          <button v-on:click="deleteAnnouncement(getUpdateId(data.item.id))">
             <b-icon icon="trash-fill" aria-hidden="true" variant="danger"> </b-icon>
-          </router-link>
-          <router-link :to="{name: 'landing'}" tag="b-icon" exact v-on:click.native="close()">Home</router-link>
+          </button>
+
         </template>
       </b-table>
     </div>
@@ -76,7 +75,38 @@ export default {
           }
         }
       })
-    }
+    },
+
+    deleteAnnouncement: function (id) {
+      const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
+      const baseURI = API_BASE_URL + '/announcement/delete'
+      const token = process.env.VUE_APP_API_TOKEN;
+
+      let formData = {
+        'id': id,
+      };
+
+      if(confirm('Delete', 'Are you sure?')){
+        this.$http.post(baseURI, formData,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'bearer '+token,
+          },
+        })
+            .then((result) => {
+              const data = result.data;
+              if( data.results !== undefined){
+                this.deleteRow(id);
+                console.log("Deleted row" + id)
+              }
+            })
+      }
+    },
+
+    deleteRow(id){
+      const index = this.announcements.findIndex(item => item.id ===id);
+      this.announcements.splice(index, 1);
+    },
 
   },
 
