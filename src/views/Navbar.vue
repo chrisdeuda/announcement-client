@@ -1,20 +1,24 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
+    <span v-if="!isLoggedIn">
+      <router-link to="/">Home</router-link> |
+    </span>
+
     <span v-if="isLoggedIn">
       <router-link to="/announcements">Announcements</router-link> |
     </span>
     <span v-if="isLoggedIn">
-      <a @click="logout">Logout</a>
-    </span>
-    <span v-else>
-      <router-link to="/login">Login</router-link>
-    </span>
-    <span v-if="isLoggedIn">
       <router-link :to="{path: '/announcement/new',
         query: { type: 'add' }} "
-      >&nbsp;|New</router-link>
+      >New</router-link>
     </span>
+    <span v-if="isLoggedIn">
+      <a @click="logout">&nbsp;|Logout</a>
+    </span>
+    <span v-else>
+      <router-link to="/login">&nbsp;Login</router-link>
+    </span>
+
 
   </div>
 </template>

@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from "../store";
-import Announcements from '../views/Announcements.vue'
+import AnnouncementsPublic from '../views/Announcements.vue'
 import Login from "@/views/Login";
-//import AnnouncementNewPage from '../views/AnnouncementsNewPage.vue'
+import Announcements from '@/components/Announcements.vue'
 import AnnouncementsEdit from '@/components/Announcements/AnnouncementEdit.vue'
 
 Vue.use(VueRouter)
@@ -12,8 +12,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Announcements,
-    meta: {requiresAuth: true},
+    component: AnnouncementsPublic,
   },
   {
     path: '/login',
@@ -23,6 +22,12 @@ const routes = [
     meta: { guest: true },
   },
   {
+    path: '/announcements',
+    name: 'Announcements',
+    component: Announcements,
+    meta: {requiresAuth: true},
+
+  }, {
     path: '/announcement/new',
     name: 'AnnouncementNewPage',
     component: AnnouncementsEdit,
@@ -36,8 +41,6 @@ const routes = [
     props: true,
     meta: {requiresAuth: true},
   }
-
-
 ]
 
 const router = new VueRouter({
