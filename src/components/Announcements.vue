@@ -1,7 +1,7 @@
 <template>
   <div class="announcements">
     <div>
-      <b-table striped hover :items="announcements" :fields="fields">
+      <b-table striped hover :items="Announcements" :fields="fields">
         <!-- A virtual column -->
         <template #cell(actions)="data">
 
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: 'Announcements',
   props: {
@@ -45,69 +46,26 @@ export default {
     }
   },
   created() {
-    this.fetchAnnouncements();
+    //this.fetchAnnouncements();
+     this.GetAnnouncements();
   },
+  computed: {
+    ...mapGetters({Announcements: "StateAnnouncements", User: "StateUser"}),
+  },
+
   methods: {
+    ...mapActions([ "GetAnnouncements", "DeleteAnnouncement"]),
+
     getUpdateId: function(id){
       return parseInt(id );
     },
 
-    fetchAnnouncements: function () {
-      const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
-      const baseURI = API_BASE_URL + '/announcements'
-      const token = process.env.VUE_APP_API_TOKEN;
-      this.$http.get(baseURI, {
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((result) => {
-        console.log();
-        const data = result.data;
-        console.log(data);
-        if( data.results !== undefined){
-          const announcements = data.results.announcements;
-          if (announcements !==undefined){
-            this.announcements = Object.keys(announcements).map((key) => {
-              return announcements[key]
-            })
-          }
-        }
-      })
-    },
-
     deleteAnnouncement: function (id) {
-      const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
-      const baseURI = API_BASE_URL + '/announcement/delete'
-      const token = process.env.VUE_APP_API_TOKEN;
-
-      let formData = {
-        'id': id,
-      };
-
       if(confirm('Delete', 'Are you sure?')){
-        this.$http.post(baseURI, formData,{
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'bearer '+token,
-          },
-        })
-            .then((result) => {
-              const data = result.data;
-              if( data.results !== undefined){
-                this.deleteRow(id);
-                console.log("Deleted row" + id)
-              }
-            })
+        let $result = this.DeleteAnnouncement(id);
+        console.log($result);
       }
     },
-
-    deleteRow(id){
-      const index = this.announcements.findIndex(item => item.id ===id);
-      this.announcements.splice(index, 1);
-    },
-
   },
 
 }
