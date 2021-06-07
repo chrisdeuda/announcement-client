@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-container fluid>
-    <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+    <b-form @submit.stop.prevent="onSubmit">
       <b-row class="my-1">
         <b-col sm="2">
           <label for="input-default">Title:</label>
@@ -9,7 +9,14 @@
         <b-col sm="10">
           <b-form-input
               id="input-default"
-              placeholder="Enter the title"></b-form-input>
+              placeholder="Enter the title"
+              v-model="$v.form.title.$model"
+              :state="validateState('title')"
+              aria-describedby="title-live-feedback"
+          ></b-form-input>
+          <b-form-invalid-feedback
+              id="title-live-feedback"
+          >This is a required field </b-form-invalid-feedback>
         </b-col>
       </b-row>
       <b-row class="my-1">
@@ -19,11 +26,16 @@
         <b-col sm="10">
           <b-form-textarea
               id="textarea"
-              v-model="form.content"
-              placeholder="Enter your content..."
+              v-model="$v.form.content.$model"
+              :state="validateState('content')"
+              aria-describedby="content-live-feedback"
               rows="6"
               max-rows="10"
           ></b-form-textarea>
+          <b-form-invalid-feedback
+              id="content-live-feedback"
+          >This is a required field
+          </b-form-invalid-feedback>
         </b-col>
       </b-row>
       <b-row class="my-1">
@@ -45,41 +57,107 @@
           <b-form-datepicker
               id="endDate"
               v-model="form.endDate"
+              :state="validateState('endDate')"
+              aria-describedby="endDate-live-feedback"
               class="mb-2"
+              :min="form.startDate"
+
           >
           </b-form-datepicker>
+          <b-form-invalid-feedback
+              id="endDate-live-feedback"
+          >End Date should be Equal or ahead on start Date
+          </b-form-invalid-feedback>
         </b-col>
       </b-row>
-
-
       <b-button type="submit" variant="primary">Submit</b-button>
       <b-button type="reset" variant="danger">Reset</b-button>
     </b-form>
-    <b-card class="mt-3" header="Form Data Result">
-      <pre class="m-0">{{ form }}</pre>
-    </b-card>
     </b-container>
   </div>
 
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
+import { required,  } from 'vuelidate/lib/validators'
+
 export default {
   name: 'AnnouncementNewComp',
+  mixins: [validationMixin],
   data() {
     return {
       errors:[],
-      title: null,
-      content: null,
-      startDate: null,
-      endDate: null,
-      show: true
+      form: {
+        title: null,
+        content: null,
+        startDate: null,
+        endDate: null,
+        active: false
+      },
+      show: true,
     }
   },
+  validations: {
+    form:{
+      title: {
+        required,
+      },
+      content: {
+        required,
+      },
+      startDate: {
+        required,
+      },
+      endDate: {
+        required,
+      },
+    }
+
+  },
   methods: {
+    validateState(name) {
+      const { $dirty, $error } = this.$v.form[name];
+      return $dirty ? !$error : null;
+    },
+    resetForm() {
+      this.form = {
+        title: null,
+        content: null,
+        startDate: null,
+        endDate: null,
+      };
+
+      this.$nextTick(() => {
+        this.$v.$reset();
+      });
+    },
     onSubmit(event) {
+
+      this.$v.form.$touch();
+      if (this.$v.form.$anyError) {
+        return;
+      }
+      const formData = this.form;
+      const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
+      const baseURI = API_BASE_URL + '/announcement/create'
+      const token = process.env.VUE_APP_API_TOKEN;
+
+      this.$http.post(baseURI, formData,{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'bearer '+token,
+        },
+      })
+      .then((result) => {
+        const data = result.data;
+        if( data.results !== undefined){
+          alert(data.results);
+        }
+      })
+
+      alert("Form submitted!");
       event.preventDefault()
-      alert(JSON.stringify(this.form))
     },
     onReset(event) {
       event.preventDefault()
