@@ -1,15 +1,26 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
+      <NavBar />
+
+<!--      <router-link to="/">Home</router-link> |
       <router-link :to="{path: '/announcement/new',
         query: { type: 'add' }
 
-      } ">New</router-link>
+      } ">New</router-link>-->
     </div>
     <router-view/>
   </div>
 </template>
+<script>
+import NavBar from '@/views/Navbar.vue'
+export default {
+  components: {
+    NavBar
+  }
+}
+
+</script>
 
 <style lang="scss">
 #app {
