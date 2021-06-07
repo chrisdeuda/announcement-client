@@ -209,10 +209,9 @@ export default {
 
               const data = result.data;
 
-              if( data.results !== undefined){
+              if( data.data !== undefined){
                 this.parentResponse = data.results;
-                let announcement = JSON.parse(JSON.stringify(data.results));
-                this.form = announcement.announcement;
+                this.form  = JSON.parse(JSON.stringify(data.data));
               }
             })
             .catch(function (error) {

@@ -41,11 +41,8 @@ const actions = {
                 console.log();
                 const data = result.data;
                 console.log(data);
-                if( data.results !== undefined){
-                    const data = result.data;
-                    if( data.results !== undefined){
-                        alert("New Announcement created successfully");
-                    }
+                if( data.data !== undefined){
+                    alert("New Announcement created successfully");
                 }
             })
             .catch(error => {
@@ -61,11 +58,8 @@ const actions = {
                 console.log();
                 const data = result.data;
                 console.log(data);
-                if( data.results !== undefined){
-                    const data = result.data;
-                    if( data.results !== undefined){
-                        alert("Update Announcement success");
-                    }
+                if( data.data !== undefined){
+                    alert("Update Announcement success");
                 }
             })
             .catch(error => {
@@ -82,11 +76,12 @@ const actions = {
         };
         axios.get("api/announcements", {headers})
             .then((result) => {
-                console.log();
+
                 const data = result.data;
-                console.log(data);
-                if( data.results !== undefined){
-                    const announcements = data.results.announcements;
+                if( data.data !== undefined){
+
+                    const announcements = data.data;
+                    console.log(announcements);
                     if (announcements !==undefined){
                         this.announcements = Object.keys(announcements).map((key) => {
                             return announcements[key]
