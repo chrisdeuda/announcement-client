@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-//import axios from a
+//const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
+
+const getHeaders = function(state){
+    return {
+        'Authorization': 'Bearer ' + state.user_token,
+        "Content-Type": "application/json",
+    };
+}
 const state = {
     user: null,
     announcements: null,
@@ -25,13 +32,48 @@ const actions = {
         }, (error) => {
             console.log(error);
         });
+    },
+    async CreateAnnouncement( {state }, announcement) {
 
+        let headers =  getHeaders(state)
+        window.axios.post( "/api/announcement/create", announcement, {headers})
+            .then((result) => {
+                console.log();
+                const data = result.data;
+                console.log(data);
+                if( data.results !== undefined){
+                    const data = result.data;
+                    if( data.results !== undefined){
+                        alert("New Announcement created successfully");
+                    }
+                }
+            })
+            .catch(error => {
+                this.errorMessage = error.message;
+                console.error("There was an error!", error);
+            });
     },
 
-    async CreatePost({ dispatch }, post) {
-        await axios.post("api/announcement", post);
-        return await dispatch("GetAnnouncements");
+    async UpdateAnnouncement( {state }, announcement) {
+        let headers =  getHeaders(state);
+        window.axios.post( "/api/announcement/update", announcement, {headers})
+            .then((result) => {
+                console.log();
+                const data = result.data;
+                console.log(data);
+                if( data.results !== undefined){
+                    const data = result.data;
+                    if( data.results !== undefined){
+                        alert("Update Announcement success");
+                    }
+                }
+            })
+            .catch(error => {
+                this.errorMessage = error.message;
+                console.error("There was an error!", error);
+            });
     },
+
 
     async GetAnnouncements({ state, commit }) {
         const headers = {
@@ -61,10 +103,7 @@ const actions = {
     },
 
     async DeleteAnnouncement({ state, commit }, id) {
-        const headers = {
-            'Authorization': 'Bearer ' + state.user_token,
-            "Content-Type": "application/json",
-        };
+        let headers =  getHeaders(state);
 
         let formData = {
             'id': id,

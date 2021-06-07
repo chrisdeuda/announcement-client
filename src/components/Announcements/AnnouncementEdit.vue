@@ -45,8 +45,8 @@
         </b-col>
         <b-col sm="4">
           <b-form-datepicker
-              id="example-datepicker"
-              v-model="form.startDate"
+              id="startDate"
+              v-model="$v.form.startDate.$model"
               class="mb-2"
           >
           </b-form-datepicker>
@@ -57,7 +57,7 @@
         <b-col sm="4">
           <b-form-datepicker
               id="endDate"
-              v-model="form.endDate"
+              v-model="$v.form.endDate.$model"
               :state="validateState('endDate')"
               aria-describedby="endDate-live-feedback"
               class="mb-2"
@@ -82,6 +82,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required,  } from 'vuelidate/lib/validators'
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: 'AnnouncementNewComp',
@@ -120,9 +121,11 @@ export default {
 
   },
   computed: {
+    ...mapGetters({Announcements: "StateAnnouncements", User: "StateUser"}),
     isEditAnnouncementForm(){
       return (this.id !== undefined);
     },
+
 
   },
   created(){
@@ -130,11 +133,8 @@ export default {
     if (this.isEditAnnouncementForm) {
       this.fetchAnnouncement();
       this.editing = true;
-      console.log("this is edit form");
     } else {
       this.editing = false;
-      console.log("this is Create form");
-      // this
     }
   },
   watch: {
@@ -148,6 +148,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions([ "CreateAnnouncement", "UpdateAnnouncement"]),
     validateState(name) {
       const { $dirty, $error } = this.$v.form[name];
       return $dirty ? !$error : null;
@@ -170,61 +171,22 @@ export default {
       if (this.$v.form.$anyError) {
         return;
       }
+      const formData = this.form;
 
       if(this.isEditAnnouncementForm){
-        this.updateAnnouncement();
+
+        this.UpdateAnnouncement(formData);
 
       } else {
-        this.newAnnouncement();
+        formData.active = false;
+        this.CreateAnnouncement(formData);
       }
       event.preventDefault()
     },
 
-    newAnnouncement(){
-      const formData = this.form;
-      const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
-      const baseURI = API_BASE_URL + '/announcement/create'
-      const token = process.env.VUE_APP_API_TOKEN;
-
-      formData.active = false;
-
-      this.$http.post(baseURI, formData,{
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'bearer '+token,
-        },
-      })
-          .then((result) => {
-            const data = result.data;
-            if( data.results !== undefined){
-              alert("New Announcement created successfully");
-            }
-          })
-    },
-
-    updateAnnouncement(){
-      const formData = this.form;
-      const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
-      const baseURI = API_BASE_URL + '/announcement/update'
-      const token = process.env.VUE_APP_API_TOKEN;
-      this.$http.post(baseURI, formData,{
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'bearer '+token,
-        },
-      })
-          .then((result) => {
-            const data = result.data;
-            if( data.results !== undefined){
-              alert("Update Announcement success");
-            }
-          })
-
-      alert("Form submitted!");
-
-
-    },
-
+    /**
+     * @TODO move this function to Vuex class
+     */
     fetchAnnouncement(){
 
         const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
@@ -256,13 +218,6 @@ export default {
             .catch(function (error) {
               console.log(error);
             });
-
-
-
-
-
-
-
     },
     onReset(event) {
       event.preventDefault()
