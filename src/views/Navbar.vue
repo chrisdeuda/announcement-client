@@ -1,20 +1,19 @@
 <template>
   <div id="nav">
     <router-link to="/">Home</router-link> |
-    <router-link to="/posts">Announcements</router-link> |
+    <span v-if="isLoggedIn">
+      <router-link to="/announcements">Announcements</router-link> |
+    </span>
     <span v-if="isLoggedIn">
       <a @click="logout">Logout</a>
     </span>
     <span v-else>
-      <router-link to="/register">Register</router-link> |
       <router-link to="/login">Login</router-link>
     </span>
-    <span>
+    <span v-if="isLoggedIn">
       <router-link :to="{path: '/announcement/new',
-        query: { type: 'add' }
-
-      } ">New</router-link>
-
+        query: { type: 'add' }} "
+      >&nbsp;|New</router-link>
     </span>
 
   </div>
@@ -30,7 +29,7 @@ export default {
   methods: {
     async logout (){
       await this.$store.dispatch('LogOut')
-      this.$router.push('/api/login')
+      this.$router.push('/login')
     }
   },
 }
