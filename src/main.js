@@ -16,6 +16,8 @@ import router from './router'
 axios.defaults.withCredentials = true
 axios.defaults.baseUrl = process.env.VUE_APP_API_BASE_URL
 
+window.axios = axios;
+
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
