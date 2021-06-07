@@ -7,7 +7,9 @@
 
           <!-- or you could make an button with an icon/symbol -->
           <router-link
-              :to="{path: '/announcement/edit/' + getUpdateId(data.item.id) }"
+              :to="{path: '/announcement/edit/' + getUpdateId(data.item.id),
+                     query: { type: 'edit' }
+                }"
               tag="button">
             <b-icon icon="pencil-square" aria-hidden="true" variant="success"> </b-icon>
           </router-link>

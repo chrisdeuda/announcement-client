@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Announcements from '../views/Announcements.vue'
-import AnnouncementNewPage from '../views/AnnouncementsNewPage.vue'
-
+//import AnnouncementNewPage from '../views/AnnouncementsNewPage.vue'
+import AnnouncementsEdit from '@/components/Announcements/AnnouncementEdit.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -12,14 +12,21 @@ const routes = [
     component: Announcements
   },
   {
-    path: '/new',
+    path: '/announcement/new',
     name: 'AnnouncementNewPage',
-    component: AnnouncementNewPage,
+    component: AnnouncementsEdit,
 
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     //component: () => import(/* webpackChunkName: "about" */ '../views/AnnouncementsNewPage.vue')
+  },
+  {
+    path: '/announcement/edit/:id',
+    name: 'AnnouncementEdit',
+    component: AnnouncementsEdit,
+    props: true,
+
   }
 ]
 
